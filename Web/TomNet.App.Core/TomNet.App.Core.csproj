@@ -1,0 +1,69 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Source\TomNet.AspNetCore\TomNet.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\Source\TomNet.Log4Net\TomNet.Log4Net.csproj" />
+    <ProjectReference Include="..\..\Source\TomNet.Redis\TomNet.Redis.csproj" />
+    <ProjectReference Include="..\..\Source\TomNet.SqlSugarCore\TomNet.SqlSugarCore.csproj" />
+    <ProjectReference Include="..\TomNet.App.Model\TomNet.App.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="T4\ContractCodeScript.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ContractCodeScript.txt</LastGenOutput>
+      <LastOutputs>
+..\Contracts\Identity\IRoleContract.Generated.cs
+..\Contracts\Identity\IUserInfoContract.Generated.cs
+..\Contracts\Identity\IUserLoginContract.Generated.cs
+..\Contracts\Identity\IUserRoleMapContract.Generated.cs
+..\Contracts\Security\IRoleFunctionMapContract.Generated.cs
+.\ContractCodeScript.txt
+</LastOutputs>
+    </None>
+    <None Update="T4\ContractCodeScript.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ContractCodeScript.tt</DependentUpon>
+    </None>
+    <None Update="T4\ServiceCodeScript.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ServiceCodeScript.txt</LastGenOutput>
+      <LastOutputs>
+..\Services\Identity\RoleService.Generated.cs
+..\Services\Identity\UserInfoService.Generated.cs
+..\Services\Identity\UserLoginService.Generated.cs
+..\Services\Identity\UserRoleMapService.Generated.cs
+..\Services\Security\RoleFunctionMapService.Generated.cs
+.\ServiceCodeScript.txt
+</LastOutputs>
+    </None>
+    <None Update="T4\ServiceCodeScript.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ServiceCodeScript.tt</DependentUpon>
+    </None>
+    <None Update="T4\ServicePackCodeScript.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ServicePackCodeScript.txt</LastGenOutput>
+      <LastOutputs>
+..\ServicePackBase.cs
+.\ServicePackCodeScript.txt
+</LastOutputs>
+    </None>
+    <None Update="T4\ServicePackCodeScript.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ServicePackCodeScript.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+</Project>

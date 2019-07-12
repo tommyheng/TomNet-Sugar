@@ -1,0 +1,78 @@
+﻿<#+
+public class ServicePackTemplate : CSharpTemplate
+{
+	private string _ns;
+	private List<string> _servicens;
+	private List<string> _contractns;
+    private List<string> _contracts;
+	private List<string> _services;
+
+    public ServicePackTemplate(List<string> services, List<string> servicens, List<string> contracts, List<string> contractns, string ns)
+    {
+		_ns = ns;
+		_services = services;
+		_servicens = servicens;
+		_contracts = contracts;
+		_contractns = contractns;
+    }
+
+    public string FileName
+    {
+        get{ return string.Format("I{0}Contract.Generated.cs", _ns); }
+    }
+	public override string TransformText()
+	{
+		base.TransformText();
+#>
+using Microsoft.Extensions.DependencyInjection;
+
+using TomNet.Core.Packs;
+<#+
+string[] cns = _contractns.Distinct().ToArray();
+string[] sns = _servicens.Distinct().ToArray();
+
+for (int i = 0; i < cns.Length; i++)
+{
+#>
+using <#= cns[i] #>;
+using <#= sns[i] #>;
+<#+}#>
+
+
+namespace <#= _ns #>
+{
+	public abstract class ServicePackBase : TomNetPack
+    {
+        /// <summary>
+        /// 获取 模块级别，级别越小越先启动
+        /// </summary>
+        public override PackLevel Level => PackLevel.Application;
+
+        public override int Order => 2;
+
+        /// <summary>
+        /// 将模块服务添加到依赖注入服务容器中
+        /// </summary>
+        /// <param name="services">依赖注入服务容器</param>
+        /// <returns></returns>
+        public override IServiceCollection AddServices(IServiceCollection services)
+        {
+<#+
+string[] cs = _contracts.Distinct().ToArray();
+string[] ss = _services.Distinct().ToArray();
+
+for (int i = 0; i < cs.Length; i++)
+{
+#>
+			services.AddScoped<<#= cs[i] #>, <#= ss[i] #>>();
+<#+}#>
+            return base.AddServices(services);
+        }
+    }
+
+}
+<#+
+        return this.GenerationEnvironment.ToString();
+	}
+}
+#>

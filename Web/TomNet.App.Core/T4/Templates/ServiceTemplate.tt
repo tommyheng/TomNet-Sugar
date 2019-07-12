@@ -1,0 +1,266 @@
+﻿<#+
+public class ServiceTemplate : CSharpTemplate
+{
+	private string _name;
+	private string _modelns;
+	private string _buildns;
+    private string _keytype;
+	private string _contractns;
+
+    public ServiceTemplate(string keytype, string name, string modelns, string buildns, string contractns)
+    {
+		_name		= name;
+		_keytype	= keytype;
+		_modelns	= modelns;
+		_buildns	= buildns;
+		_contractns = contractns;
+       
+    }
+
+    public string FileName
+    {
+        get{ return string.Format("{0}Service.Generated.cs", _name); }
+    }
+
+	public override string TransformText()
+	{
+		base.TransformText();
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+
+using SqlSugar;
+
+using TomNet.SqlSugarCore.Entity;
+using <#= _modelns #>;
+using <#= _contractns #>;
+
+
+namespace <#= _buildns #>
+{
+    /// <summary>
+    /// 服务类 <#= _name #>
+    /// </summary> 
+	public partial class <#= _name #>Service : I<#= _name #>Contract
+    {   		
+		/// <summary>
+        /// 服务提供者
+        /// </summary>
+
+	    private readonly IServiceProvider _serviceProvider;
+
+		/// <summary>
+        /// 仓储对象
+        /// </summary>
+		IRepository<<#= _name #>, <#= _keytype #>> _repository;
+
+		/// <summary>
+        /// 构造函数
+        /// </summary>
+        public <#= _name #>Service(IServiceProvider provider)
+        {
+			_serviceProvider = provider;
+			_repository = _serviceProvider.GetService<IRepository<<#= _name #>, <#= _keytype #>>>();
+            UnitOfWork = _repository.UnitOfWork;
+            Entities = _repository.Entities;
+        }
+
+		/// <summary>
+        /// 当前单元操作对象
+        /// </summary>
+        public IUnitOfWork UnitOfWork { get; }
+
+        /// <summary>
+        /// 当前实体类型的查询数据集
+        /// </summary>
+        public ISugarQueryable<<#= _name #>> Entities { get; }
+
+         /// <summary>
+        /// 新增
+        /// </summary>
+        /// <returns>操作影响的行数</returns>
+        public int Insert(<#= _name #> entity)
+        {
+            return _repository.Insert(entity);
+        }
+
+        public Task<int> InsertAsync(<#= _name #> entity)
+        {
+            return _repository.InsertAsync(entity);
+        }
+
+        /// <summary>
+        /// 批量新增
+        /// </summary>
+        /// <returns>操作影响的行数</returns>
+        public int Insert(List<<#= _name #>> entities)
+        {
+            return _repository.Insert(entities);
+        }
+
+        public Task<int> InsertAsync(List<<#= _name #>> entities)
+        {
+            return _repository.InsertAsync(entities);
+        }
+
+        /// <summary>
+        /// 批量新增
+        /// </summary>
+        /// <returns>操作影响的行数</returns>
+        public int Insert(<#= _name #>[] entities)
+        {
+            return _repository.Insert(entities);
+        }
+
+        public Task<int> InsertAsync(<#= _name #>[] entities)
+        {
+            return _repository.InsertAsync(entities);
+        }
+
+        /// <summary>
+        /// 新增并返回实体
+        /// </summary>
+        /// <returns>操作影响的行数</returns>
+        public <#= _name #> InsertReturnEntity(<#= _name #> entity)
+        {
+            return _repository.InsertReturnEntity(entity);
+        }
+
+        public Task<<#= _name #>> InsertReturnEntityAsync(<#= _name #> entity)
+        {
+            return _repository.InsertReturnEntityAsync(entity);
+        }
+
+        /// <summary>
+        /// 修改（主键是更新条件）
+        /// </summary>
+        /// <param name="entity"> 实体对象（必须指定主键特性 [SugarColumn(IsPrimaryKey=true)]）</param> 
+        /// <param name="ignoreColumns">不更新的列</param>
+        /// <returns>操作影响的行数</returns>
+        public int Update(<#= _name #> entity, string[] ignoreColumns = null)
+        {
+            return _repository.Update(entity, ignoreColumns);
+        }
+
+        public Task<int> UpdateAsync(<#= _name #> entity, string[] ignoreColumns = null)
+        {
+            return _repository.UpdateAsync(entity, ignoreColumns);
+        }
+
+        /// <summary>
+        /// 修改（主键是更新条件）
+        /// </summary>
+        /// <param name="entitys">实体对象集合（必须指定主键特性 [SugarColumn(IsPrimaryKey=true)]） </param> 
+        /// <param name="ignoreColumns">不更新的列</param>
+        /// <returns>操作影响的行数</returns>
+        public int Update(List<<#= _name #>> entitys, string[] ignoreColumns = null)
+        {
+            return _repository.Update(entitys, ignoreColumns);
+        }
+
+        public Task<int> UpdateAsync(List<<#= _name #>> entitys, string[] ignoreColumns = null)
+        {
+            return _repository.UpdateAsync(entitys, ignoreColumns);
+        }
+
+
+        /// <summary>
+        /// 修改
+        /// </summary>
+        /// <param name="update">实体对象</param> 
+        /// <param name="predicate">条件</param>  
+        /// <returns>操作影响的行数</returns>
+        public int Update(Expression<Func<<#= _name #>, <#= _name #>>> update, Expression<Func<<#= _name #>, bool>> predicate = null)
+        {
+            return _repository.Update(update, predicate);
+        }
+
+        public Task<int> UpdateAsync(Expression<Func<<#= _name #>, <#= _name #>>> update, Expression<Func<<#= _name #>, bool>> predicate = null)
+        {
+            return _repository.UpdateAsync(update, predicate);
+        }
+
+
+        /// <summary>
+        /// 根据实体删除
+        /// </summary>
+        /// <param name="entity">实体对象</param>
+        /// <returns>操作影响的行数</returns>
+        public int Delete(<#= _name #> entity)
+        {
+            return _repository.Delete(entity);
+        }
+
+        public Task<int> DeleteAsync(<#= _name #> entity)
+        {
+            return _repository.DeleteAsync(entity);
+        }
+
+        /// <summary>
+        /// 根据主键删除
+        /// </summary>
+        /// <param name="id">主键</param>
+        /// <returns>操作影响的行数</returns>
+        public int Delete(<#= _keytype #> id)
+        {
+            return _repository.Delete(id);
+        }
+
+        public Task<int> DeleteAsync(<#= _keytype #> id)
+        {
+            return _repository.DeleteAsync(id);
+        }
+
+        /// <summary>
+        /// 根据主键数组删除
+        /// </summary>
+        /// <param name="ids">主键数组</param>
+        /// <returns>操作影响的行数</returns>
+        public int Delete(<#= _keytype #>[] ids)
+        {
+            return _repository.Delete(ids);
+        }
+
+        public Task<int> DeleteAsync(<#= _keytype #>[] ids)
+        {
+            return _repository.DeleteAsync(ids);
+        }
+
+        /// <summary>
+        /// 根据条件删除
+        /// </summary>
+        /// <param name="predicate">删除条件</param>
+        /// <returns>操作影响的行数</returns>
+        public int Delete(Expression<Func<<#= _name #>, bool>> predicate)
+        {
+            return _repository.Delete(predicate);
+        }
+
+        public Task<int> DeleteAsync(Expression<Func<<#= _name #>, bool>> predicate)
+        {
+            return _repository.DeleteAsync(predicate);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一条符合条件的数据
+        /// </summary>
+        /// <param name="predicate">查询条件</param>
+        public <#= _name #> GetFirst(Expression<Func<<#= _name #>, bool>> predicate)
+        {
+            return _repository.GetFirst(predicate);
+        }
+
+        public Task<<#= _name #>> GetFirstAsync(Expression<Func<<#= _name #>, bool>> predicate)
+        {
+            return _repository.GetFirstAsync(predicate);
+        }		
+	}
+}
+<#+
+        return this.GenerationEnvironment.ToString();
+	}
+}
+#>

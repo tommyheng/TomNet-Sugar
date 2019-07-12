@@ -1,0 +1,63 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ output extension=".txt" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.ComponentModel.DataAnnotations" #>
+<#@ include file="Include\T4Helper.ttinclude"#> 
+<#@ include file="T4Toolbox.tt" #>
+<#@ include file="Templates\ServiceTemplate.tt" #>
+<#@ assembly name="$(TargetDir)TomNet.SqlSugarCore.dll" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="TomNet.SqlSugarCore.Entity" #>
+<#
+	string nameSpace	= "TomNet.App.Core";	// ******** 当前项目命名空间,如果不同,请替换 ********
+	string modelProj	= "TomNet.App.Model";	// ******** Model项目命名空间,如果不同,请替换 ********
+	string modelPath	= modelProj + ".DB";	// ******** Model所在的文件夹,如果不同,请替换 ********
+	
+	string outfolder	= "Services";
+	string contractPath = "Contracts";
+	
+	string currentPath = Path.GetDirectoryName(Host.TemplateFile);	
+	string projectPath = currentPath.Substring(0, currentPath.IndexOf(@"\T4"));
+
+	List<Type> lst = T4Helper.GetModels(projectPath, modelProj);
+
+	foreach (var item in lst)
+	{		
+		string name			= item.Name;
+		string buildns		= "";
+		string modelns		= item.Namespace;
+		string keytype		= T4Helper.GetKeyType(item);
+		string outpath		= "";
+		string tmppath		= "";
+		string contractns	= "";
+
+		if (modelns.StartsWith(modelPath))
+		{
+			if (modelns != modelPath)
+			{
+				tmppath = modelns.Remove(0, modelPath.Length + 1);
+			}
+		}
+
+		if (tmppath == "")
+		{
+			buildns = string.Format(@"{0}.{1}", nameSpace, outfolder);
+			contractns = string.Format(@"{0}.{1}", nameSpace, contractPath);
+			outpath = string.Format(@"{0}\{1}", projectPath, outfolder);
+		}
+		else
+		{
+			buildns = string.Format(@"{0}.{1}.{2}", nameSpace, outfolder, tmppath);
+			contractns = string.Format(@"{0}.{1}.{2}", nameSpace, contractPath, tmppath);
+			outpath = string.Format(@"{0}\{1}\{2}", projectPath, outfolder, tmppath);
+		}
+		ServiceTemplate config = new ServiceTemplate(keytype, name, modelns, buildns, contractns);
+        outpath = Path.Combine(outpath, config.FileName);
+        config.Output.Encoding = Encoding.UTF8;
+        config.RenderToFile(outpath);
+	}
+#>

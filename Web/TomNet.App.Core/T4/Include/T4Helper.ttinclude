@@ -1,0 +1,86 @@
+﻿<#@ assembly name="System.Core" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System.ComponentModel.DataAnnotations" #>
+<#+
+class  T4Helper{
+
+	public static List<Type> GetModels(string projectPath, string modelNS)
+	{
+		Type baseType = typeof(IEntity<>);
+		string[] filters ={"System", "Microsoft", "netstandard", "dotnet", "Window", "mscorlib", "api-ms-win-core"};	
+		string[] files = Directory.GetFiles(projectPath, modelNS + ".dll", SearchOption.AllDirectories).ToArray();
+		Assembly[] assemblies = files.Where(file => filters.All(token => Path.GetFileName(file)?.StartsWith(token) != true))
+										.Select(Assembly.LoadFrom).ToArray();
+		Type[] types = assemblies.SelectMany(assembly => assembly.GetTypes()).Distinct().ToArray();
+		List<Type> lst = new List<Type>();
+		foreach (var item in types)
+		{
+			if (T4Helper.IsGenericAssignableFrom(baseType, item))
+			{
+				lst.Add(item);
+			}
+		}
+
+		if (lst.Count() == 0)
+		{
+			throw new Exception("未获得任何model模型数据，请重新生成本模块！");
+		}
+		return lst;
+	}
+
+
+	public static string GetKeyType(Type type)
+	{
+		string res = "";
+		PropertyInfo[] Properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+		PropertyInfo property = Properties.FirstOrDefault(m => m.Name.ToUpper() == "ID");
+		if (property != null)
+		{
+			Type keyType = property.PropertyType;
+			res = keyType == typeof(int) ? "int" : keyType.Name;
+		}
+		return res;
+	}
+
+	public static bool IsGenericAssignableFrom(Type genericType, Type type)
+	{
+		if (!genericType.IsGenericType)
+		{
+			throw new ArgumentException("该功能只支持泛型类型的调用，非泛型类型可使用 IsAssignableFrom 方法。");
+		}
+
+		if (type.IsAbstract || !type.IsClass)
+		{
+			return false;
+		}
+
+		List<Type> allOthers = new List<Type> { type };
+		if (genericType.IsInterface)
+		{
+			allOthers.AddRange(type.GetInterfaces());
+		}
+
+		foreach (var other in allOthers)
+		{
+			Type cur = other;
+			while (cur != null)
+			{
+				if (cur.IsGenericType)
+				{
+					cur = cur.GetGenericTypeDefinition();
+				}
+				if (cur.IsSubclassOf(genericType) || cur == genericType)
+				{
+					return true;
+				}
+				cur = cur.BaseType;
+			}
+		}
+		return false;
+	}
+}
+#>

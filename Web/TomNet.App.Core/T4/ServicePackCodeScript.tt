@@ -1,0 +1,68 @@
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ output extension=".txt" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.ComponentModel.DataAnnotations" #>
+<#@ include file="Include\T4Helper.ttinclude"#> 
+<#@ include file="T4Toolbox.tt" #>
+<#@ include file="Templates\ServicePackTemplate.tt" #>
+<#@ assembly name="$(TargetDir)TomNet.SqlSugarCore.dll" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="TomNet.SqlSugarCore.Entity" #>
+
+<#
+	string nameSpace	= "TomNet.App.Core";	// ******** 当前项目命名空间,如果不同,请替换 ********
+	string modelProj	= "TomNet.App.Model";	// ******** Model项目命名空间,如果不同,请替换 ********
+	string modelPath	= modelProj + ".DB";	// ******** Model所在的文件夹,如果不同,请替换 ********
+	
+	string service		= "Services";
+	string contract		= "Contracts";
+
+	string currentPath = Path.GetDirectoryName(Host.TemplateFile);	
+	string projectPath = currentPath.Substring(0, currentPath.IndexOf(@"\T4"));
+
+	List<Type> lst = T4Helper.GetModels(projectPath, modelProj);
+
+	List<string> servicensArr = new List<string>();
+	List<string> contractnsArr = new List<string>();
+	List<string> contractArr = new List<string>();
+	List<string> serviceArr = new List<string>();
+
+	foreach (var item in lst)
+	{
+		string name = item.Name;
+		string modelns = item.Namespace;
+		string keytype = T4Helper.GetKeyType(item);		
+
+		string temppath = "";
+		if (modelns.StartsWith(modelPath))
+		{
+			if (modelns != modelPath)
+			{
+				temppath = modelns.Remove(0, modelPath.Length + 1);
+			}
+		}
+
+		contractArr.Add("I" + name + "Contract");
+		serviceArr.Add(name + "Service");
+
+		if (temppath == "")
+		{
+			servicensArr.Add(string.Format(@"{0}.{1}", nameSpace, service));
+			contractnsArr.Add(string.Format(@"{0}.{1}", nameSpace, contract));
+		}
+		else
+		{
+			servicensArr.Add(string.Format(@"{0}.{1}.{2}", nameSpace, service, temppath));
+			contractnsArr.Add(string.Format(@"{0}.{1}.{2}", nameSpace, contract, temppath));
+		}
+	}
+
+	    ServicePackTemplate config = new ServicePackTemplate(serviceArr, servicensArr, contractArr, contractnsArr, nameSpace);
+		string outpath = Path.Combine(projectPath, "ServicePackBase.cs");
+        config.Output.Encoding = Encoding.UTF8;
+        config.RenderToFile(outpath);
+#>

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="119f53d0-bc44-4728-aa6b-df0f86014d8c" ChangeDateTime="06/24/2019 01:01:55">
+    <Property Name="ElementName" Value="[dbo].[Functions].[IsWebApi]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Functions]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="IsApi" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2a709295-3d4d-4414-8f1b-8f3f653ac3a2" ChangeDateTime="06/25/2019 00:52:56">
+    <Property Name="ElementName" Value="[dbo].[UserRole].[RoleName]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[UserRole]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Name" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="2cbffcf2-4914-440b-9107-4205ee6c0f69" ChangeDateTime="06/25/2019 00:53:08">
+    <Property Name="ElementName" Value="[dbo].[Function].[IsApi]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Function]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="IsWebApi" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="672ee7e0-818c-405c-be03-7205d279542d" ChangeDateTime="06/25/2019 00:57:35">
+    <Property Name="ElementName" Value="[dbo].[UserInfo].[Phone]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[UserInfo]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Telephone" />
+  </Operation>
+</Operations>

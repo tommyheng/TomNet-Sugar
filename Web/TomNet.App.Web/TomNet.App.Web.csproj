@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <UserSecretsId>92792a17-8b77-4df6-805c-362068828b88</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Source\TomNet.AspNetCore\TomNet.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\Source\TomNet.Authentication\TomNet.Authentication.csproj" />
+    <ProjectReference Include="..\..\Source\TomNet.Log4Net\TomNet.Log4Net.csproj" />
+    <ProjectReference Include="..\..\Source\TomNet.Redis\TomNet.Redis.csproj" />
+    <ProjectReference Include="..\..\Source\TomNet.SqlSugarCore\TomNet.SqlSugarCore.csproj" />
+    <ProjectReference Include="..\TomNet.App.Core\TomNet.App.Core.csproj" />
+  </ItemGroup>
+
+</Project>

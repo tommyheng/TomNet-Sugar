@@ -1,0 +1,178 @@
+﻿<#+
+public class ContractTemplate : CSharpTemplate
+{   
+	private string _name;
+	private string _modelns;
+	private string _buildns;
+    private string _keytype;
+
+	public ContractTemplate(string keytype, string name, string modelns, string buildns)
+    {		
+		_name = name;
+		_keytype = keytype;
+		_modelns = modelns;
+		_buildns = buildns;      
+    }
+
+	public string FileName
+    {
+        get{ return string.Format("I{0}Contract.Generated.cs", _name); }
+    }
+
+	public override string TransformText()
+	{
+		base.TransformText();
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+
+using SqlSugar;
+
+using TomNet.SqlSugarCore.Entity;
+using <#= _modelns #>;
+
+
+namespace <#= _buildns #>
+{
+    /// <summary>
+    /// 契约接口 <#= _name #>
+    /// </summary> 
+	public partial interface I<#= _name #>Contract
+    { 
+		/// <summary>
+        /// 获取 当前单元操作对象
+        /// </summary>
+        IUnitOfWork UnitOfWork { get; }
+
+		/// <summary>
+        /// 获取 当前实体类型的查询数据集
+        /// </summary>
+        ISugarQueryable<<#= _name #>> Entities { get; }
+
+        //=============================== 实现方法 ===============================
+        /// <summary>
+        /// 新增
+        /// </summary>
+        /// <returns>操作影响的行数</returns>
+        int Insert(<#= _name #> entity);
+
+        Task<int> InsertAsync(<#= _name #> entity);
+
+
+        /// <summary>
+        /// 批量新增
+        /// </summary>
+        /// <returns>操作影响的行数</returns>
+        int Insert(List<<#= _name #>> entities);
+
+        Task<int> InsertAsync(List<<#= _name #>> entities);
+
+
+        /// <summary>
+        /// 批量新增
+        /// </summary>
+        /// <returns>操作影响的行数</returns>
+        int Insert(<#= _name #>[] entities);
+
+        Task<int> InsertAsync(<#= _name #>[] entities);
+
+
+        /// <summary>
+        /// 新增并返回实体
+        /// </summary>
+        /// <returns>操作影响的行数</returns>
+        <#= _name #> InsertReturnEntity(<#= _name #> entity);
+
+        Task<<#= _name #>> InsertReturnEntityAsync(<#= _name #> entity);
+
+
+        /// <summary>
+        /// 修改（主键是更新条件）
+        /// </summary>
+        /// <param name="entity"> 实体对象（必须指定主键特性 [SugarColumn(IsPrimaryKey=true)]）</param> 
+        /// <param name="ignoreColumns">不更新的列</param>
+        /// <returns>操作影响的行数</returns>
+        int Update(<#= _name #> entity, string[] ignoreColumns = null);
+
+        Task<int> UpdateAsync(<#= _name #> entity, string[] ignoreColumns = null);
+
+
+        /// <summary>
+        /// 修改（主键是更新条件）
+        /// </summary>
+        /// <param name="entitys">实体对象集合（必须指定主键特性 [SugarColumn(IsPrimaryKey=true)]） </param> 
+        /// <param name="ignoreColumns">不更新的列</param>
+        /// <returns>操作影响的行数</returns>
+        int Update(List<<#= _name #>> entitys, string[] ignoreColumns = null);
+
+        Task<int> UpdateAsync(List<<#= _name #>> entitys, string[] ignoreColumns = null);
+
+
+        /// <summary>
+        /// 修改
+        /// </summary>
+        /// <param name="update">实体对象</param> 
+        /// <param name="predicate">条件</param>  
+        /// <returns>操作影响的行数</returns>
+        int Update(Expression<Func<<#= _name #>, <#= _name #>>> update, Expression<Func<<#= _name #>, bool>> predicate = null);
+
+        Task<int> UpdateAsync(Expression<Func<<#= _name #>, <#= _name #>>> update, Expression<Func<<#= _name #>, bool>> predicate = null);
+
+
+        /// <summary>
+        /// 根据实体删除
+        /// </summary>
+        /// <param name="entity">实体对象</param>
+        /// <returns>操作影响的行数</returns>
+        int Delete(<#= _name #> entity);
+
+        Task<int> DeleteAsync(<#= _name #> entity);
+
+
+        /// <summary>
+        /// 根据主键删除
+        /// </summary>
+        /// <param name="id">主键</param>
+        /// <returns>操作影响的行数</returns>
+        int Delete(<#= _keytype #> id);
+
+        Task<int> DeleteAsync(<#= _keytype #> id);
+
+
+        /// <summary>
+        /// 根据主键数组删除
+        /// </summary>
+        /// <param name="ids">主键数组</param>
+        /// <returns>操作影响的行数</returns>
+        int Delete(<#= _keytype #>[] ids);
+
+        Task<int> DeleteAsync(<#= _keytype #>[] ids);
+
+
+        /// <summary>
+        /// 根据条件删除
+        /// </summary>
+        /// <param name="predicate">删除条件</param>
+        /// <returns>操作影响的行数</returns>
+        int Delete(Expression<Func<<#= _name #>, bool>> predicate);
+
+        Task<int> DeleteAsync(Expression<Func<<#= _name #>, bool>> predicate);
+
+
+        /// <summary>
+        /// 根据条件查询第一条符合条件的数据
+        /// </summary>
+        /// <param name="predicate">查询条件</param>
+        <#= _name #> GetFirst(Expression<Func<<#= _name #>, bool>> predicate);
+
+        Task<<#= _name #>> GetFirstAsync(Expression<Func<<#= _name #>, bool>> predicate);
+
+	}
+}
+<#+
+        return this.GenerationEnvironment.ToString();
+	}
+}
+#>
